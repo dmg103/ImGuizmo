@@ -1,19 +1,96 @@
-CXXFLAGS=-std=c++11
-CPPFLAGS=-I. -Iexample
+###############################################################
+##### MACROS
+###############################################################
+#$(1) : Compiler
+#$(2) : Object file to generate
+#$(3) : Source file
+#$(4) : Additional dependencies
+#$(5) : Flags
+define COMPILE
+$(2): $(3) $(4)
+	$(1) -c -o $(2) $(3) $(5)
+endef
 
-LIB_OBJS = ImGuizmo.o GraphEditor.o ImCurveEdit.o ImGradient.o ImSequencer.o
-EXAMPLE_OBJS = example/imgui.o example/imgui_draw.o example/imgui_tables.o example/imgui_widgets.o example/main.o
+#$(1) : Source file
+define SOURCE2OBJ
+$(patsubst %.cpp, %.o, $(patsubst ./%, ./obj/%, $(1)))
+endef
 
-EXAMPLE_NAME = example.exe
-LDFLAGS=-mwindows -static-libgcc -static-libstdc++
-LIBS=-limm32 -lopengl32 -lgdi32
+#$(1) : Source file
+define SOURCE2HEADER
+$(patsubst %.cpp, %.h, $(1))
+endef
 
-$(EXAMPLE_NAME): $(LIB_OBJS) $(EXAMPLE_OBJS)
-	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
+###############################################################
+##### VARIABLES
+###############################################################
+APP     := libImGuizmos.a
+OSLIB   := a
+AR      := ar
+ARFLAGS := -crs
+RANLIB  := ranlib
+CC      := g++
+CCFLAGS := -std=c++20 -O3
+MKDIR   := mkdir -p
 
-example/main.o: CXXFLAGS := -std=c++17
+###############################################################
+##### DIRECTORIES
+###############################################################
+OS_ARCH_BINDIR := ./bin/
+BIN            := ./bin/$(APP)
+OBJDIRS        := obj
+
+###############################################################
+##### LIBRARIES AND INCLUDES
+###############################################################
+LIBDIR  := -I../glfw/include
+LIBDIR  += -I./ -I./example
+INCDIRS := $(LIBDIR)
+
+###############################################################
+##### FILES
+###############################################################
+
+IMGUI_DIR  := .
+ALLCPPSH   := $(IMGUI_DIR)/GraphEditor.cpp $(IMGUI_DIR)/ImCurveEdit.cpp $(IMGUI_DIR)/ImGradient.cpp
+ALLCPPSH   += $(IMGUI_DIR)/ImGuizmo.cpp $(IMGUI_DIR)/ImSequencer.cpp
+ALLCPPS    := $(ALLCPPSH) 
+ALLOBJS    := $(foreach F,$(ALLCPPS),$(call SOURCE2OBJ,$(F)))
+
+###############################################################
+##### TARGETS
+###############################################################
+
+$(BIN): $(OBJDIRS) $(OS_ARCH_BINDIR) $(ALLOBJS)
+	@echo "==== Linking $(APP) ===="
+	@echo "$(BIN)"
+	$(AR) $(ARFLAGS) $(BIN) $(ALLOBJS)
+	$(RANLIB) $(BIN)
+
+
+###############################################################
+##### BUILD FILE RULES
+###############################################################
+
+$(foreach F,$(ALLCPPSH),$(eval $(call COMPILE,$(CC),$(call SOURCE2OBJ,$(F)),$(F),$(call SOURCE2HEADER,$(F)),$(CCFLAGS) $(INCDIRS))))
+
+$(OBJDIRS):
+	@echo "==== Creating $(APP) obj directories ===="
+	@$(MKDIR) $(OBJDIRS)
+
+$(OS_ARCH_BINDIR):
+	@echo "==== Creating $(APP) bin directories ===="
+	@$(MKDIR) $(OS_ARCH_BINDIR)
+
+.PHONY: info clean
+
+info:
+	$(info $(ALLCPPS))
+	$(info $(ALLOBJS))	
+	$(info $(OBJDIRS))
 
 clean:
-	$(RM) $(LIB_OBJS)
-	$(RM) $(EXAMPLE_OBJS)
-	$(RM) $(EXAMPLE_NAME)
+	@echo "==== Cleaning IMGuizmos ===="
+	@rm -rf ./obj
+	@rm -rf ./bin
+
