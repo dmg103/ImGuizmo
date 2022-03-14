@@ -942,15 +942,15 @@ namespace IMGUIZMO_NAMESPACE
       ImGui::SetNextWindowPos(ImVec2(0, 0));
 #endif
 
-      ImGui::PushStyleColor(ImGuiCol_WindowBg, 0);
-      ImGui::PushStyleColor(ImGuiCol_Border, 0);
-      ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+     // ImGui::PushStyleColor(ImGuiCol_WindowBg, 0);
+     // ImGui::PushStyleColor(ImGuiCol_Border, 0);
+     // ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 
       ImGui::Begin("gizmo", NULL, flags);
       gContext.mDrawList = ImGui::GetWindowDrawList();
       ImGui::End();
-      ImGui::PopStyleVar();
-      ImGui::PopStyleColor(2);
+      //ImGui::PopStyleVar();
+      //ImGui::PopStyleColor(2);
    }
 
    bool IsUsing()
