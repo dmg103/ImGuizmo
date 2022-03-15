@@ -931,7 +931,8 @@ namespace IMGUIZMO_NAMESPACE
 
    void BeginFrame()
    {
-      const ImU32 flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus;
+      const ImU32 flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus
+                          | ImGuiWindowFlags_NoBackground;
 
 #ifdef IMGUI_HAS_VIEWPORT
       ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
@@ -942,15 +943,9 @@ namespace IMGUIZMO_NAMESPACE
       ImGui::SetNextWindowPos(ImVec2(0, 0));
 #endif
 
-     // ImGui::PushStyleColor(ImGuiCol_WindowBg, 0);
-     // ImGui::PushStyleColor(ImGuiCol_Border, 0);
-     // ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-
       ImGui::Begin("gizmo", NULL, flags);
       gContext.mDrawList = ImGui::GetWindowDrawList();
       ImGui::End();
-      //ImGui::PopStyleVar();
-      //ImGui::PopStyleColor(2);
    }
 
    bool IsUsing()
